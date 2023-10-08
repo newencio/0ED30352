@@ -1,93 +1,36 @@
-# README #
+# Hospital Appointment System
 
-The goal is to spend 90 minutes and build out the flow to create an appointment against a doctor. Doctors don't have tightly controlled schedules; they're very unlike a Google calendar. Rather, doctors open up certain times during the day, and patients can book only into those free areas - the rest is assumed to be unavailable.
+## Overview
 
-This is like seeing a movie at the theater. You can't arbitrarily see a movie at any time; there are published start times, and you get tickets.
+This is a simple hospital appointment system that allows patients to book appointments with doctors. See class `availability_service.py` for the main logic.'
 
-Therefore this problem is to:
+## Features
 
-* Create a way to model a doctor's free times (availability)
-* Create a way to book an appointment against that free time
+- CRUD operations for doctors
+- Ability to model a doctor's availability
+- Ability to book an appointment against a doctor's availability
+- Ability to get all appointments for a doctor
+- Ability to cancel an appointment with a doctor
 
-This repository contains the outlines of a FastAPI web API. FastAPI docs are available at https://fastapi.tiangolo.com/
+## API Endpoints
 
-We've built two skeletons for this project. One uses a SQL database (sqlite, without an ORM),
-and one is entirely in-memory using data structures that mimic a database.
+- `POST /doctors`: Add a new doctor
+- `GET /doctors`: Get a list of doctors
+- `POST /schedule/`: Add a doctor's schedule
+- `GET /schedule/{doctor_id}`: Get a doctor's schedule
+- `POST /appointment/`: Book an appointment
+- `GET /appointments/{doctor_id}`: Get all appointments for a doctor
+- `DELETE /appointment/{appointment_id}`: Cancel an appointment
 
-Decide which skeleton you'd like to use, and extend it (we do prefer the SQL version). In the settings.py file, you can set `in_database` to false to trigger
-the skeleton to use an in-memory service. *Don't* do both ways - we have two implementations just as an example.
+## Extra questions
 
-## IMPORTANT
+There was a request to expand the scope of the service. I answered the question `What are some real-world constraints to booking appointments that would add complexity to this API and how would they impact the design` below:
 
-If you do this as a "take home", prior to your interview, do not spend too much time on it.
 
-We're happy to do this entirely during your interview, as a paired programming exercise in Python.
+`Multiple Locations with Travel Time`: If a doctor works at multiple locations and needs time to travel between them, the API would need to account for that when booking appointments.
+`Impact`: Would require a more complex availability checking mechanism that includes travel time.
 
-We're also happy to do this as a code review, where you do it at home in the language of your choice and we review and extend it in-person. If you choose a language
-other than Python, don't feel the need to recreate the existing CRUD endpoints - we're mostly interested in the availability aspect of things.
+`Variable Duration`: Different types of appointments might require different lengths of time.
+`Impact`: The API would need to allow for variable-length appointments, complicating the logic for checking availability.
 
-If you were to do it entirely on-site, you'd only have 90 minutes. Therefore, it's fine to aim for the same amount of time at home.
-
-Part of the exercise is to see what tradeoffs you make, and explain them when talking through the solution. How did you prioritize what to build first? What, if anything, would you do differently if you had to put this code into production?
-
-## Problem statement
-
-We would like to build a simple service for managing doctors and their schedules.
-Requirements:
-
-* For each doctor we would initially like to store the following:
-    * id
-	* name
-	* locations - represented as a collection of address strings
-	* schedule - weekly schedule indicating the hours they are available each day of the week
-* CRUD operations for doctors
-	* This is mostly done already to set some patterns - feel free to add another endpoint or two as a warm-up, but try to focus more on the availability aspect
-* Ability to book an appointment with a doctor (a tuple of (doctor, location, time))
-* Ability to get all appointments for a doctor
-* Ability to cancel an appointment with a doctor
-
-Expectations/assumptions:
-
-* The API will be internally-facing and used by other applications/services that we trust
-* The API will be single-tenant (it only contains data for a single hospital)
-* A doctor is available at any of their locations for any of their available times
-* A doctor can only have one appointment at a time
-* A doctor can travel instantaneously between locations
-* No UI/front-end is expected
-
-## Prerequisites/Running It
-
-Whatever you choose from this list, the app will come up at `localhost:8000` with some swagger docs.
-
-### Docker
-
-If you prefer, you can run the app in Docker. Simply run `docker-compose up` and you should get a hot-reloading server running on port 8000. You can set the
-`in_database` flag in the `docker-compose.yaml` file, if desired.
-
-### Native
-
-Alternatively, you're welcome to run the app natively. We've developed it against Python 3.11 - once you have that installed, you should only need to run:
-```
-pip install -r requirements.txt
-python server.py
-```
-
-#### Extra questions ####
-
-Below are a few questions which expand the scope of the service. Please pick one and describe your approach.
-
-* What are some real-world constraints to booking appointments that would add complexity to this API and how would they impact the design.
-* How would our design change if this API was opened up to external users?
-* What concerns are there with multi-tenant data management and how could we modify the design to increase data security?
-
-#### Suggestions ####
-
-* Start simple
-* Document your assumptions and their impact on the design
-* Stub out areas that are not related to core functionality and describe their expected behavior
-* You may choose any means of persistence (ex: database, third-party service, etc.) or choose to exclude it (e.g. in-memory only). We recognize that integrating with a persistence layer may be time-consuming and by omitting it, more time can be allocated to service development.
-* You may use any third-party libraries you feel are appropriate
-
-### Who do I talk to? ###
-* If you have any questions prior to your interview, please reach out to your designated Kyruus recruiting contact and he/she will get back to you as soon as possible.
-* If you have any feedback on the interview question after you're done, let us know, we're always looking into improving the interview process. Thanks!
+`Buffer Time`: Doctors might require buffer time between appointments. `Impact`: Adds complexity to the scheduling logic to ensure that no appointments are made during these buffer periods.
